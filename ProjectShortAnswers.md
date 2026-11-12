@@ -6,7 +6,7 @@
 
 **Answer:**
 
-We prevent password-length leakage by padding every password to a fixed maximum length of 64 characters before encryption. Specifically, we append null bytes (`\x00`) until the plaintext reaches `MAX_PASSWORD_LENGTH`, then encrypt it using AES-GCM. Because every password has the same plaintext length before encryption, the resulting ciphertexts have the same length as well. This prevents an adversary from inferring the original password length from the ciphertext size.
+We prevent password-length leakage by encoding every password into a fixed-size plaintext before encryption. Passwords are limited to `MAX_PASSWORD_LENGTH` = 64 characters (longer ones are rejected). We first UTF-8 encode the password, then build a 193-byte buffer: one byte holding the password's true byte length, followed by the password bytes, followed by zero padding. 192 bytes is the most that 64 JavaScript characters can take up in UTF-8, so every allowed password fits, whatever its character set. We pad in bytes, not characters, so non-ASCII passwords cannot produce longer plaintexts. Because every plaintext is exactly the same size, every AES-GCM ciphertext is the same size too, and an adversary cannot infer the password length from it. The stored length prefix also lets us remove the padding exactly on decryption.
 
 ## Question 2
 
@@ -14,7 +14,7 @@ We prevent password-length leakage by padding every password to a fixed maximum 
 
 **Answer:**
 
-We prevent swap attacks by binding each encrypted password to its corresponding domain using authenticated encryption with associated data (AEAD). Specifically, we supply the hashed domain name as the additional authenticated data (AAD) to the AES-GCM encryption and decryption functions. If an adversary swaps the ciphertext for `siteA` into the record for `siteB`, decryption will use `siteB`'s domain value as the AAD. Since the ciphertext's authentication tag was generated using `siteA`'s domain value, authentication fails and decryption is rejected. The adversary therefore cannot successfully substitute one site's encrypted password for another site's password.
+We prevent swap attacks by binding each encrypted password to its corresponding domain using authenticated encryption with associated data (AEAD). Specifically, we supply the domain name itself as the additional authenticated data (AAD) to the AES-GCM encryption and decryption functions. If an adversary swaps the ciphertext for `siteA` into the record for `siteB`, decryption will use `siteB`'s domain name as the AAD. Since the ciphertext's authentication tag was generated using `siteA`'s domain name, authentication fails and decryption is rejected. The adversary therefore cannot successfully substitute one site's encrypted password for another site's password.
 
 ## Question 3
 

@@ -10,6 +10,48 @@ const { subtle } = require('crypto').webcrypto;
 const PBKDF2_ITERATIONS = 100000; // number of iterations for PBKDF2 algorithm
 const MAX_PASSWORD_LENGTH = 64;   // we can assume no password is longer than this many characters
 
+// Passwords are padded in BYTES (after UTF-8 encoding), not characters, so that
+// non-ASCII passwords don't produce longer ciphertexts. A JS string of 64 UTF-16
+// code units encodes to at most 64 * 3 = 192 UTF-8 bytes (a surrogate pair is
+// 2 code units -> 4 bytes, still <= 3 bytes per unit).
+const MAX_PASSWORD_BYTES = MAX_PASSWORD_LENGTH * 3;
+// Every plaintext is: [1-byte true length][password bytes][zero padding]
+const PADDED_PLAINTEXT_BYTES = 1 + MAX_PASSWORD_BYTES;
+
+/********* Padding helpers ********/
+
+/**
+ * Encodes a password into a fixed-size buffer so every ciphertext has the same
+ * length regardless of the password's length or character set.
+ * @param {string} password
+ * @returns {Uint8Array} A PADDED_PLAINTEXT_BYTES-long buffer
+ */
+function padPassword(password) {
+  if (password.length > MAX_PASSWORD_LENGTH) {
+    throw new Error(`Password exceeds the maximum length of ${MAX_PASSWORD_LENGTH} characters`);
+  }
+  const passwordBytes = stringToBuffer(password);
+  const padded = new Uint8Array(PADDED_PLAINTEXT_BYTES); // zero-filled
+  padded[0] = passwordBytes.length; // <= 192, fits in one byte
+  padded.set(passwordBytes, 1);
+  return padded;
+}
+
+/**
+ * Inverse of padPassword: reads the stored length and returns exactly that
+ * many bytes, so passwords containing "\x00" round-trip correctly.
+ * @param {BufferSource} paddedBuffer
+ * @returns {string} The original password
+ */
+function unpadPassword(paddedBuffer) {
+  const padded = new Uint8Array(paddedBuffer);
+  const length = padded[0];
+  if (padded.length !== PADDED_PLAINTEXT_BYTES || length > MAX_PASSWORD_BYTES) {
+    throw new Error("Malformed plaintext padding");
+  }
+  return bufferToString(padded.slice(1, 1 + length));
+}
+
 /********* Implementation ********/
 class Keychain {
   /**
@@ -249,10 +291,11 @@ class Keychain {
     const iv= decodeBuffer(record.iv);
     const ciphertextBuffer= decodeBuffer(record.cipher);
 
+    let plaintextBuffer;
     try{
       //3. Decrypt the password
       // We pass the domain name as 'additionalData' (AAD). If an adversary swapped this ciphertext with another domain's ciphertext, the AAD won't match and SubtleCrypto will automatically throw an error here preventing swap attacks
-      const plaintextBuffer= await subtle.decrypt(
+      plaintextBuffer= await subtle.decrypt(
         {
           name: "AES-GCM",
           iv: iv,
@@ -261,14 +304,12 @@ class Keychain {
         this.secrets.encKey,
         ciphertextBuffer
       );
-      const paddedPassword = bufferToString(plaintextBuffer);
-      //4. Remove the padding to return the original password length
-      const password = paddedPassword.replace(/\x00/g, "");
-      return password;
     }catch (error){
     // Catch authentication tag failures (Swap attack or data tampering)
     throw new Error("Integrity check failed: Swap attack detected or data corrupted");
     }
+    //4. Remove the padding using the stored length to recover the original password
+    return unpadPassword(plaintextBuffer);
   };
 
   /** 
@@ -287,10 +328,10 @@ class Keychain {
     const kvsKeyBits = await subtle.sign("HMAC", this.secrets.domainKey, nameBuffer);
     const kvsKey = encodeBuffer(kvsKeyBits);
 
-    // 2. Pad the password to a consistent maximum length (64 chars) 
-    // to hide the actual password length from adversaries.
-    const paddedPassword = value.padEnd(MAX_PASSWORD_LENGTH, "\x00");
-    const plaintextBuffer = stringToBuffer(paddedPassword);
+    // 2. Pad the password (as UTF-8 bytes) to a fixed size so every ciphertext
+    // has the same length, hiding the actual password length from adversaries.
+    // Throws if the password is longer than MAX_PASSWORD_LENGTH characters.
+    const plaintextBuffer = padPassword(value);
 
     // 3. Generate a random Initialization Vector (12 bytes for AES-GCM)
     const iv = getRandomBytes(12);
