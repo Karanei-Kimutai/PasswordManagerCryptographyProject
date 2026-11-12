@@ -18,6 +18,20 @@ The original coursework code is preserved unchanged on the **`keychain-coursewor
 
 ---
 
+## Why "Tessera"?
+
+In ancient Rome, a *tessera* was a small tile or token. The word had three everyday uses, and each one describes part of what this application does.
+
+**1. The mosaic tile.** Roman mosaics were made from thousands of small, uniform tesserae. A single tile means little on its own. The picture only appears when they are put together in the right places. Tessera's vault works the same way. Each item is its own sealed tile: encrypted separately, padded to exactly the same size, and stored under a locator that reveals nothing. To anyone without the key, the vault is a grid of identical, featureless tiles. Only the owner's key arranges them into a picture they can read. The integrity tag makes sure no tile can be swapped, removed or slipped back in unnoticed.
+
+**2. The watchword token** (*tessera militaris*). Each evening the Roman army wrote the night's **watchword** on a tablet, the tessera, and passed it from unit to unit. The historian Polybius describes how the tablets were returned and checked, so the commander knew the word had arrived intact and on time. A password manager carries the same thing, a secret that grants entry, and Tessera's defenses do the same checking: every record is authenticated, and a vault that comes back older than expected is refused as a rollback.
+
+**3. The token of trust** (*tessera hospitalis*). Two families bound by a pact of hospitality would break a token in two and each keep one half. Years later, a descendant could prove who they were by presenting a half that fitted the other perfectly, without having to say anything secret out loud. Tessera signs you in the same way. Your browser presents an `authKey` derived from your master password, the server checks that it matches its half, and the master password itself is never handed over.
+
+All three meanings point to the idea the project is built on: **small, uniform pieces that each keep their own secret, and trust that comes from proof rather than disclosure.** The logo shows it literally: four tiles, one of them set apart in the accent colour.
+
+---
+
 ## Quick start
 
 Requirements: **Node.js 20.19+** and npm.

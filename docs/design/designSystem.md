@@ -12,7 +12,9 @@ What we deliberately avoided: oversized headings, gradients, floating cards ever
 
 ## The name and mark
 
-A *tessera* is one small tile of a Roman mosaic. Roman soldiers also received the night's **watchword** on a tablet called a tessera, so it is a fitting name for a password manager. The mark is four tiles, one in the accent colour.
+A *tessera* is one small tile of a Roman mosaic. The same word meant the tablet that carried the army's nightly **watchword**, and the split token two families used to recognise each other. All three meanings show up in how the app works; the full story is in [Why "Tessera"?](../../README.md#why-tessera) in the main README.
+
+The mark is four tiles, one of them in the accent colour. It stands for the vault: uniform, separately sealed pieces, one of which is yours to read. The same restraint carries through the interface. Uniform rows, hairline joints like the grout between tiles, and a single accent mirror the vault's fixed-size, indistinguishable records.
 
 ## Tokens
 
