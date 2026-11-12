@@ -1,0 +1,111 @@
+/*
+ * tokens.css: Tessera's design tokens.
+ *
+ * Direction: quiet, precise and discreet. A warm stone foundation with dark
+ * ink text, one deliberate accent (pine green), hairline borders instead of
+ * shadows, and restrained 4px corners. A charcoal variant follows the
+ * operating system's dark mode.
+ *
+ * Colour is never decoration. Each semantic colour means one thing:
+ *   accent  → the primary action, current selection and focus
+ *   danger  → something is wrong or destructive
+ *   warning → something needs attention
+ *   success → a meaningful security or completion state
+ */
+
+:root {
+  /* Typography */
+  --fontSans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fontMono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --textXs: 11px;
+  --textSm: 12px;
+  --textBase: 14px;
+  --textMd: 15px;
+  --textLg: 18px;
+  --textXl: 22px;
+
+  /* Spacing scale (4px base) */
+  --space1: 4px;
+  --space2: 8px;
+  --space3: 12px;
+  --space4: 16px;
+  --space5: 20px;
+  --space6: 24px;
+  --space8: 32px;
+  --space10: 40px;
+
+  /* Shape */
+  --radius: 4px;
+  --hairline: 1px solid var(--borderSubtle);
+
+  /* Motion: short, and only for meaningful feedback */
+  --durationFast: 120ms;
+  --durationBase: 180ms;
+  --easing: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Light theme: warm stone and ink */
+  --surfaceApp: #f3f1ec;
+  --surfacePanel: #f9f8f5;
+  --surfaceRaised: #ffffff;
+  --surfaceHover: #ebe8e1;
+  --surfaceSelected: #e2ebe5;
+  --surfaceInset: #efece6;
+
+  --borderSubtle: #e1ddd4;
+  --borderStrong: #cbc5b9;
+
+  --textPrimary: #1d1c1a;
+  --textSecondary: #5d5952;
+  --textTertiary: #8a857b;
+
+  --accent: #2c5a49;
+  --accentHover: #224739;
+  --accentContrast: #ffffff;
+  --accentSubtle: #e0eae4;
+
+  --danger: #a3392d;
+  --dangerSubtle: #f6e3df;
+  --warning: #8a5a0f;
+  --warningSubtle: #f6ecd7;
+  --success: #2c6a4a;
+  --successSubtle: #e0eee5;
+
+  --focusRing: 0 0 0 2px var(--surfacePanel), 0 0 0 4px rgba(44, 90, 73, 0.45);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme: charcoal, with the accent lifted for contrast */
+    --surfaceApp: #141514;
+    --surfacePanel: #191a19;
+    --surfaceRaised: #202120;
+    --surfaceHover: #252725;
+    --surfaceSelected: #1d2c26;
+    --surfaceInset: #111211;
+
+    --borderSubtle: #2a2c2a;
+    --borderStrong: #3a3d3a;
+
+    --textPrimary: #e9e7e2;
+    --textSecondary: #a7a39b;
+    --textTertiary: #76736d;
+
+    --accent: #82b9a1;
+    --accentHover: #97c7b1;
+    --accentContrast: #0e1a15;
+    --accentSubtle: #1e3128;
+
+    --danger: #e07b6d;
+    --dangerSubtle: #36201c;
+    --warning: #d8a64d;
+    --warningSubtle: #33291a;
+    --success: #82b9a1;
+    --successSubtle: #1e3128;
+
+    --focusRing: 0 0 0 2px var(--surfacePanel), 0 0 0 4px rgba(130, 185, 161, 0.5);
+
+    color-scheme: dark;
+  }
+}

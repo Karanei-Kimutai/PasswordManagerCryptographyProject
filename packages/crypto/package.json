@@ -1,0 +1,15 @@
+{
+  "name": "@tessera/crypto",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tessera's cryptographic core. Runs unchanged in the browser and in Node.js (Web Crypto API only).",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "license": "ISC"
+}

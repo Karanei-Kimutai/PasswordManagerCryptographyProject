@@ -1,0 +1,24 @@
+{
+  "name": "tessera",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tessera: a zero-knowledge, client-side encrypted password manager built on the Web Crypto API.",
+  "workspaces": [
+    "packages/crypto",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c auto \"npm:dev -w server\" \"npm:dev -w client\"",
+    "build": "npm run build -w client",
+    "start": "npm start -w server",
+    "test": "npm test -w packages/crypto && npm test -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "ISC"
+}
