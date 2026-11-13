@@ -1,2 +1,13 @@
+# Dependencies and build output
+node_modules/
+dist/
+
+# Local data (SQLite database, server secret)
+server/data/
+
+# Original starter code archive
 proj1.zip
-src/node_modules/
+
+# Editor / OS noise
+.DS_Store
+*.log
